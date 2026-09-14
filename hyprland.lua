@@ -3,19 +3,19 @@
 ------------------
 
 hl.monitor({
-    output   = "DP-1",
-    mode     = "1920x1080@180",
+    output = "DP-1",
+    mode = "1920x1080@180.00",
     position = "0x0",
-    scale    = "1",
+    scale = "1",
     vrr = 3,
     supports_hdr = -1
 })
 
 hl.monitor({
-    output   = "HDMI-A-1",
-    mode     = "1920x1080@75",
+    output = "HDMI-A-1",
+    mode = "1920x1080@74.97",
     position = "-1920x0",
-    scale    = "1",
+    scale = "1",
     vrr = 0,
     supports_hdr = -1
 })
@@ -31,7 +31,7 @@ local fileManager = "nautilus"
 ---- AUTOSTART ----
 -------------------
 
-hl.on("hyprland.start", function ()
+hl.on("hyprland.start", function()
     hl.exec_cmd("xrandr --output DP-1 --primary")
     hl.exec_cmd("noctalia")
 end)
@@ -41,9 +41,9 @@ end)
 -------------------------------
 
 hl.env("GTK_THEME", "adw-gtk3-dark")
-hl.env("XCURSOR_THEME","macOS-White")
+hl.env("XCURSOR_THEME", "macOS-White")
 hl.env("XCURSOR_SIZE", "24")
-hl.env("HYPRCURSOR_THEME","macOS-White")
+hl.env("HYPRCURSOR_THEME", "macOS-White")
 hl.env("HYPRCURSOR_SIZE", "24")
 hl.env("QT_QPA_PLATFORMTHEME", "qt6ct")
 
@@ -55,16 +55,24 @@ hl.env("CUDA_DISABLE_PERF_BOOST", "1")
 
 hl.env("ELECTRON_OZONE_PLATFORM_HINT", "wayland")
 
+hl.env("__GL_SHADER_DISK_CACHE_SKIP_CLEANUP", "1")
+hl.env("__GL_SHADER_DISK_CACHE_SIZE", "107374182400")
+
+hl.env("WINEDLLOVERRIDES", "winemenubuilder.exe=d;winebth.sys=d;gameinput=d;winealsa.drv=d")
 hl.env("HOST_LC_ALL", "uk_UA.UTF-8")
-hl.env("PROTON_DXVK_LOWLATENCY", "1")
-hl.env("DXVK_FRAME_PACE", "min-latency")
+hl.env("VKD3D_CONFIG", "descriptor_heap")
 hl.env("PROTON_DLSS_UPGRADE", "1")
 hl.env("DXVK_NVAPI_DRS_SETTINGS", "NGX_DLSS_SR_OVERRIDE_RENDER_PRESET_SELECTION=J")
 
+--hl.env("PROTON_VKD3D_LOWLATENCY", "1")
+--hl.env("VKD3D_LOW_LATENCY_OFFSET", "500")
+--hl.env("PROTON_DXVK_LOWLATENCY", "1")
+--hl.env("DXVK_FRAME_PACE", "min-latency")
+
 hl.env("GDK_BACKEND", "wayland,x11,*")
 hl.env("QT_QPA_PLATFORM", "wayland;xcb")
-hl.env("SDL_VIDEODRIVER", "wayland")
-hl.env("SDL_VIDEO_DRIVER", "wayland")
+hl.env("SDL_VIDEODRIVER", "wayland,x11")
+hl.env("SDL_VIDEO_DRIVER", "wayland,x11")
 hl.env("CLUTTER_BACKEND", "wayland")
 
 hl.env("XDG_CURRENT_DESKTOP", "Hyprland")
@@ -86,32 +94,27 @@ hl.config({
     },
     decoration = {
         rounding = 15,
-        blur = {
-            enabled = false
-        }
-    },
-    dwindle = {
-        preserve_split = true
+        blur = { enabled = false }
     },
     input = {
         kb_layout = "us,ua,ru",
         kb_options = "grp:alt_shift_toggle",
-        follow_mouse = 1,
         force_no_accel = true,
         sensitivity = 0,
         accel_profile = "flat",
-        emulate_discrete_scroll = 0,
-        follow_mouse = 2
+        follow_mouse = 2,
+        emulate_discrete_scroll = 0
     },
     cursor = {
         default_monitor = "DP-1",
         no_hardware_cursors = 0,
-        use_cpu_buffer = 0,
-        no_break_fs_vrr = 1,
+        no_break_fs_vrr = 0,
         no_warps = true
     },
     render = {
-        direct_scanout = 2
+        direct_scanout = 2,
+        cm_enabled = false,
+        async_commit = true
     },
     misc = {
         disable_splash_rendering = true,
@@ -121,6 +124,10 @@ hl.config({
     ecosystem = {
         no_update_news = true,
         no_donation_nag = true
+    },
+    xwayland = {
+        force_zero_scaling = true,
+        use_nearest_neighbor = true
     }
 })
 
@@ -131,38 +138,38 @@ hl.config({
 local mainMod = "SUPER"
 local ipc = "noctalia msg "
 
---hl.bind("mouse:276", hl.dsp.exec_cmd("sh -c 'touch /tmp/ptt_active ; wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 0'"))
---hl.bind("mouse:276", hl.dsp.exec_cmd("sh -c 'rm -f /tmp/ptt_active ; sleep 0.3 ; [ ! -f /tmp/ptt_active ] && wpctl set-mute @DEFAULT_AUDIO_SOURCE@ 1'"), { release = true })
+local customWorkspace1 = "name:Ігри"
+local customWorkspace2 = "name:Лаунчери"
 
-local customWorkspace = "name:Ігри"
-hl.bind(mainMod .. " + TAB", hl.dsp.focus({ workspace = customWorkspace }))
+hl.bind(mainMod .. " + TAB", hl.dsp.focus({ workspace = customWorkspace1 }))
+hl.bind(mainMod .. " + ESCAPE", hl.dsp.focus({ workspace = customWorkspace2 }))
 
-hl.bind(mainMod .. "+Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
+hl.bind(mainMod .. " + Space", hl.dsp.exec_cmd(ipc .. "panel-toggle launcher"))
 hl.bind("ALT + Tab", hl.dsp.exec_cmd(ipc .. "window-switcher"))
-hl.bind(mainMod .. "+ SHIFT + S", hl.dsp.exec_cmd(ipc .. "screenshot-region"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd(ipc .. "screenshot-region"))
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0 }))
 hl.bind(mainMod .. " + D", hl.dsp.window.fullscreen({ mode = 1 }))
 hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. " + C", hl.dsp.window.close())
-hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("command -v hyprshutdown >/dev/null 2>&1 && hyprshutdown || hyprctl dispatch 'hl.dsp.exit()'"))
+hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprctl kill"))
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd("loginctl terminate-user $USER"))
 hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. " + V", hl.dsp.window.float({ action = "toggle" }))
 
-hl.bind(mainMod .. " + left", hl.dsp.focus({ direction = "left" }))
+hl.bind(mainMod .. " + left",  hl.dsp.focus({ direction = "left" }))
 hl.bind(mainMod .. " + right", hl.dsp.focus({ direction = "right" }))
-
-hl.bind(mainMod .. " + up", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + down", hl.dsp.focus({ direction = "down" }))
+hl.bind(mainMod .. " + up",    hl.dsp.focus({ direction = "up" }))
+hl.bind(mainMod .. " + down",  hl.dsp.focus({ direction = "down" }))
 
 for i = 1, 10 do
     local key = i % 10
-    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i}))
+    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
     hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
 end
 
 hl.bind(mainMod .. " + mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. " + mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(mainMod .. " + mouse_up",   hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 
@@ -170,28 +177,48 @@ hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
 ---- WINDOWS AND WORKSPACES ----
 --------------------------------
 
+local gameClasses = "^steam_app_.*|^cs2$|^dota2$|^Minecraft.*"
+local launcherClasses = "steam|heroic|org.qbittorrent.*"
+local noScreenShareClasses = "org.telegram.desktop"
+
 hl.workspace_rule({ workspace = "1", monitor = "DP-1", persistent = true })
 hl.workspace_rule({ workspace = "2", monitor = "HDMI-A-1", persistent = true })
-hl.workspace_rule({ workspace = "3", monitor = "DP-1" })
-hl.workspace_rule({ workspace = customWorkspace, monitor = "DP-1" })
+hl.workspace_rule({ workspace = customWorkspace1, monitor = "DP-1" })
+hl.workspace_rule({ workspace = customWorkspace2, monitor = "HDMI-A-1" })
 
 hl.window_rule({
-    match = { class = "org.telegram.desktop" },
+    match = { workspace = customWorkspace1 },
+    workspace = "1"
+})
+
+hl.window_rule({
+    match = { workspace = customWorkspace2 },
+    workspace = "1"
+})
+
+hl.window_rule({
+    match = { class = gameClasses },
+    workspace = customWorkspace1,
+    content = "game",
+    immediate = true,
+    fullscreen = true,
+    float = false,
+    decorate = false
+})
+
+hl.window_rule({
+    match = { class = launcherClasses },
+    workspace = customWorkspace2
+})
+
+hl.window_rule({
+    match = { class = noScreenShareClasses },
     no_screen_share = true
 })
 
 hl.window_rule({
-    match = { class = "^steam_app_.*|^cs2|^Minecraft.*" },
-    workspace = customWorkspace,
-    content = "game",
-    float = false,
-    fullscreen = true
-})
-
-hl.window_rule({
-    match = { class = "dev.noctalia.Noctalia" },
-    float = true,
-    size = { 1080, 920 }
+    match = { class = ".*" },
+    suppress_event = "maximize"
 })
 
 hl.window_rule({
@@ -206,9 +233,10 @@ hl.window_rule({
 })
 
 hl.window_rule({
-    match = { class = ".*" },
-    immediate = true,
-    suppress_event = "maximize"
+    match = { class = "dev.noctalia.Noctalia" },
+    float = true,
+    size = { 1080, 920 }
 })
 
+-- For Noctalia Color templates
 require("noctalia").apply_theme()
